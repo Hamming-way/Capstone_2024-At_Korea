@@ -25,16 +25,17 @@ def get_info(messages: List[Dict[str, str]]) -> str:
         return f"Sorry... Something Wrong... \n\n >>> {str(e)}"
 
 # 모델 로드 함수
-@st.cache_resource
+# @st.cache_resource
 def load_model():
-    model = models.efficientnet_b4(weights=None).to('cuda')
+    device = 'cuda' if torch.cuda.is_available() else 'cpu'
+    model = models.efficientnet_b4(weights=None).to(device)
     model.classifier = nn.Sequential(
         nn.Linear(1792, 512),
         nn.SiLU(),
         nn.Dropout(0.5),
         nn.Linear(512, 150)
-    ).to('cuda')
-    model.load_state_dict(torch.load('./K_Food/models/model_2_weights.pth'), map_location=torch.device('cpu'))
+    ).to(device)
+    model.load_state_dict(torch.load('./K_Food/models/model_2_weights.pth'), map_location=device)
     model.eval()
     return model
 
