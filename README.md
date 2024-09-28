@@ -3,3 +3,4 @@
 
 # Intro
 - Korea Information Website using AI/DL
+- Deploy via Streamlit Community Could
