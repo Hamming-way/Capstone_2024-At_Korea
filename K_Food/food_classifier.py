@@ -26,15 +26,15 @@ def get_info(messages: List[Dict[str, str]]) -> str:
 
 # 모델 로드 함수
 @st.cache_resource
-def load_model(device):
-    model = models.efficientnet_b4(weights=None).to(device)
+def load_model():
+    model = models.efficientnet_b4(weights=None)
     model.classifier = nn.Sequential(
         nn.Linear(1792, 512),
         nn.SiLU(),
         nn.Dropout(0.5),
         nn.Linear(512, 150)
-    ).to(device)
-    model.load_state_dict(torch.load('./K_Food/models/model_2_weights.pth', weights_only=True))
+    )
+    model.load_state_dict(torch.load('./K_Food/models/model_2_weights.pth'))
     model.eval()
     return model
 
@@ -54,9 +54,9 @@ def get_class_names():
     return class_names
 
 # 상위 3개 예측 함수
-def get_top_predictions(image, model, class_names, device, topk=3):
+def get_top_predictions(image, model, class_names, topk=3):
     # 이미지 전처리
-    tensor = transform_image(image).to(device)
+    tensor = transform_image(image)
 
     # 추론 모드로 모델 사용
     model.eval()
@@ -84,9 +84,8 @@ def get_top_predictions(image, model, class_names, device, topk=3):
 def show_food_classifier():
     st.title('🥄 Find K-Food')
 
-    # 장치 설정, 모델 로드, 세션 설정
-    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-    model = load_model(device)
+    # 모델 로드, 세션 설정
+    model = load_model()
     if 'fmessages' not in st.session_state:
         st.session_state.fmessages = [{"role": "system", "content": base_prompt()}]
 
@@ -110,7 +109,7 @@ def show_food_classifier():
         try:
             if analyze:
                 # 상위 3개 예측 결과
-                top_predictions = get_top_predictions(image, model, class_names, device, topk=3)
+                top_predictions = get_top_predictions(image, model, class_names, topk=3)
 
                 st.write('### This food might be:')
                 
