@@ -27,13 +27,13 @@ def get_info(messages: List[Dict[str, str]]) -> str:
 # 모델 로드 함수
 @st.cache_resource
 def load_model():
-    model = models.efficientnet_b4(weights=None)
+    model = models.efficientnet_b4(weights=None).to('cuda')
     model.classifier = nn.Sequential(
         nn.Linear(1792, 512),
         nn.SiLU(),
         nn.Dropout(0.5),
         nn.Linear(512, 150)
-    )
+    ).to('cuda')
     model.load_state_dict(torch.load('./K_Food/models/model_2_weights.pth'), map_location=torch.device('cpu'))
     model.eval()
     return model
