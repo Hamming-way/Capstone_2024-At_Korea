@@ -35,7 +35,7 @@ def load_model():
         nn.Dropout(0.5),
         nn.Linear(512, 150)
     ).to(device)
-    model.load_state_dict(torch.load('./K_Food/models/model_2_weights.pth'), map_location=device)
+    model.load_state_dict(torch.load('./K_Food/models/model_2_weights.pth'), map_location=torch.device('cpu'))
     model.eval()
     return model
 
