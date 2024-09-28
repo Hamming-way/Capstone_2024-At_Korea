@@ -25,7 +25,7 @@ def get_info(messages: List[Dict[str, str]]) -> str:
         return f"Sorry... Something Wrong... \n\n >>> {str(e)}"
 
 # 모델 로드 함수
-# @st.cache_resource
+@st.cache_resource
 def load_model():
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     model = models.efficientnet_b4(weights=None).to(device)
