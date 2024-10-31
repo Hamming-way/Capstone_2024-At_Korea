@@ -30,20 +30,25 @@ def load_model():
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     model = models.efficientnet_b4(weights=None).to(device)
     model.classifier = nn.Sequential(
-        nn.Linear(1792, 512),
+        nn.Linear(1792, 1024),
         nn.SiLU(),
         nn.Dropout(0.5),
-        nn.Linear(512, 150)
+        nn.Linear(1024, 512),
+        nn.SiLU(),
+        nn.Dropout(0.5),
+        nn.Linear(512, 150)  # 150가지 소분류
     ).to(device)
-    model.load_state_dict(torch.load('./K_Food/models/model_2_weights.pth', map_location=torch.device('cpu')))
+    model.load_state_dict(torch.load('./K_Food/models/model_eff_weights.pth', map_location=torch.device('cpu')))
     model.eval()
     return model
 
 # 이미지 전처리 함수
 def transform_image(image):
     my_transforms = transforms.Compose([
-        transforms.Resize((224, 224)),
+        transforms.Resize((380, 380)),
         transforms.ToTensor(),
+        transforms.Normalize(mean=[0.485, 0.456, 0.406],
+                             std=[0.229, 0.224, 0.225])
     ])
     return my_transforms(image).unsqueeze(0)
 
